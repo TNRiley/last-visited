@@ -1,0 +1,190 @@
+<title>Last Visited</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EDEAE4; --surface:#F7F5F0; --raise:#FFFFFF; --sunk:#E3DFD6;
+    --ink:#17171A; --muted:#65646C; --faint:#918F99; --line:#D6D2CA; --line-2:#C2BDB2;
+    --accent:#27518F; --accent-soft:#DCE4F1;
+    --dead:#A33326; --dead-soft:#F2DCD8;
+    --soft404:#9A6B1F; --indet:#7E7A86;
+    --good:#2E6B4F;
+    --shadow:0 1px 2px rgba(23,23,26,.05),0 14px 40px rgba(23,23,26,.09);
+    --r:16px; --r-sm:10px;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --paper:#101114; --surface:#191A1E; --raise:#212228; --sunk:#0B0C0E;
+    --ink:#E9E8E4; --muted:#9A98A2; --faint:#6B6976; --line:#272931; --line-2:#383A44;
+    --accent:#87ABDF; --accent-soft:#1A2234;
+    --dead:#E0796A; --dead-soft:#2E1B18;
+    --soft404:#D3A354; --indet:#8A8794;
+    --good:#6FBC97;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 16px 46px rgba(0,0,0,.45);
+  }}
+  :root[data-theme="dark"]{
+    --paper:#101114; --surface:#191A1E; --raise:#212228; --sunk:#0B0C0E;
+    --ink:#E9E8E4; --muted:#9A98A2; --faint:#6B6976; --line:#272931; --line-2:#383A44;
+    --accent:#87ABDF; --accent-soft:#1A2234;
+    --dead:#E0796A; --dead-soft:#2E1B18;
+    --soft404:#D3A354; --indet:#8A8794;
+    --good:#6FBC97;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 16px 46px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box}
+  body{background:var(--paper);color:var(--ink);font-family:"Archivo",system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px;margin:0 auto;padding:26px 22px 80px;position:relative}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+
+  .masthead{border-bottom:2.5px solid var(--ink);padding-bottom:16px;margin-bottom:6px}
+  .eyebrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-right:46px;
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .eyebrow .accent{color:var(--accent);font-weight:600}
+  h1.title{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(44px,10vw,88px);line-height:.92;letter-spacing:-.025em;
+    margin:14px 0 10px;text-wrap:balance}
+  h1.title em{font-style:italic;color:var(--accent)}
+  .dek{font-family:"Fraunces",serif;font-size:clamp(16px,2.4vw,20px);font-weight:400;color:var(--muted);max-width:64ch;line-height:1.45}
+  .dek b{color:var(--ink);font-weight:600}
+  .themebtn{position:absolute;top:26px;right:22px;background:var(--surface);border:1px solid var(--line);color:var(--muted);
+    width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:15px}
+  .themebtn:hover{color:var(--ink);border-color:var(--line-2)}
+
+  .stripe{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);
+    border-radius:var(--r-sm);overflow:hidden;margin:22px 0 4px}
+  .stripe > div{background:var(--surface);padding:12px 14px}
+  .stripe .v{font-family:"IBM Plex Mono",monospace;font-size:19px;font-weight:600;letter-spacing:-.02em}
+  .stripe .k{font-size:11px;color:var(--faint);line-height:1.35;margin-top:3px}
+  @media(max-width:680px){.stripe{grid-template-columns:repeat(2,1fr)}}
+
+  section{margin:46px 0 0}
+  h2{font-family:"Fraunces",serif;font-size:clamp(24px,4vw,33px);font-weight:600;letter-spacing:-.02em;margin:0 0 6px;line-height:1.1}
+  h2 .num{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent);letter-spacing:.14em;
+    display:block;font-weight:600;margin-bottom:8px}
+  .lede{color:var(--muted);max-width:66ch;margin:0 0 18px;font-size:15.5px}
+  .lede b{color:var(--ink);font-weight:600}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 16px 12px;box-shadow:var(--shadow)}
+  canvas{display:block;width:100%;touch-action:pan-y}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted);margin:10px 2px 2px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:11px;height:11px;border-radius:3px;flex:none;display:inline-block}
+  .readout{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);min-height:18px;margin:8px 2px 0}
+  .readout b{color:var(--ink)}
+
+  .note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 14px;border-radius:0 var(--r-sm) var(--r-sm) 0;
+    font-size:14px;color:var(--ink);margin:16px 0;line-height:1.55}
+  .note.warn{background:transparent;border:1px solid var(--line);border-left:3px solid var(--dead)}
+  .note b{font-weight:600}
+
+  .ctrls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px}
+  button.pill{background:var(--surface);border:1px solid var(--line);color:var(--muted);border-radius:999px;
+    padding:6px 13px;font:inherit;font-size:13px;cursor:pointer}
+  button.pill[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.pill:hover{border-color:var(--line-2)}
+  input.search{background:var(--surface);border:1px solid var(--line);color:var(--ink);border-radius:var(--r-sm);
+    padding:10px 13px;font:inherit;font-size:15px;width:100%;max-width:440px}
+  input.search:focus{outline:2px solid var(--accent);outline-offset:1px}
+
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:600;
+    user-select:none;white-space:nowrap;position:sticky;top:0;background:var(--surface);z-index:1}
+  td.mono,th.mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+  td.num,th.num{text-align:right}
+  .scroll{overflow:auto;max-height:520px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+  tbody tr:hover{background:var(--sunk)}
+  .u{word-break:break-all;font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--muted);display:block;margin-top:2px}
+  .tag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10.5px;padding:1px 6px;border-radius:999px;
+    border:1px solid currentColor;white-space:nowrap}
+  .t-live{color:var(--good)} .t-dead{color:var(--dead)} .t-soft{color:var(--soft404)} .t-indet{color:var(--indet)}
+  .arch{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--accent)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+
+  details.methods{margin-top:40px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:0 16px}
+  details.methods summary{cursor:pointer;padding:14px 0;font-weight:600;font-size:14px;list-style:none;display:flex;justify-content:space-between}
+  details.methods summary::-webkit-details-marker{display:none}
+  details.methods summary::after{content:"+";color:var(--accent);font-family:"IBM Plex Mono",monospace}
+  details.methods[open] summary::after{content:"\2212"}
+  details.methods > div{padding:0 0 16px;font-size:14px;color:var(--muted);line-height:1.62}
+  details.methods h4{color:var(--ink);font-size:12px;margin:18px 0 5px;text-transform:uppercase;letter-spacing:.08em}
+  details.methods code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;background:var(--sunk);padding:1px 5px;border-radius:4px}
+  footer{margin-top:46px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--faint);line-height:1.7}
+  a{color:var(--accent)}
+</style>
+
+<div class="wrap">
+  <button class="themebtn" id="theme" title="Switch theme" aria-label="Switch theme">&#9680;</button>
+
+  <header class="masthead">
+    <div class="eyebrow">
+      <span>Quick Projects</span>
+      <span class="accent">US Supreme Court &middot; 1996&ndash;2026</span>
+    </div>
+    <h1 class="title">Last <em>Visited</em></h1>
+    <p class="dek" id="dek"></p>
+  </header>
+
+  <div class="stripe" id="stripe"></div>
+  <p class="readout" id="stripe-note"></p>
+
+  <section>
+    <h2><span class="num">01 &middot; THE DECAY CURVE</span>Citations rot with age</h2>
+    <p class="lede" id="lede1"></p>
+    <div class="card">
+      <div class="ctrls">
+        <button class="pill" id="c-all" aria-pressed="true">All URLs</button>
+        <button class="pill" id="c-conf" aria-pressed="false">Only URLs the archive can vouch for</button>
+      </div>
+      <canvas id="decay" height="360"></canvas>
+      <div class="legend" id="decay-legend"></div>
+      <p class="readout" id="decay-read"></p>
+    </div>
+    <div class="note" id="note-ocr"></div>
+  </section>
+
+  <section>
+    <h2><span class="num">02 &middot; HOW THEY FAIL</span>What &ldquo;dead&rdquo; actually means</h2>
+    <p class="lede" id="lede2"></p>
+    <div class="card"><canvas id="fail" height="300"></canvas>
+      <p class="readout" id="fail-read"></p></div>
+    <div class="note warn" id="note-ua"></div>
+  </section>
+
+  <section>
+    <h2><span class="num">03 &middot; THE BACKSTOP</span>What the archive caught</h2>
+    <p class="lede" id="lede3"></p>
+    <div class="card"><canvas id="arch" height="240"></canvas>
+      <p class="readout" id="arch-read"></p></div>
+  </section>
+
+  <section>
+    <h2><span class="num">04 &middot; THE COURT&rsquo;S OWN ANSWER</span>Three conventions in thirty years</h2>
+    <p class="lede" id="lede4"></p>
+    <div class="card"><canvas id="practice" height="320"></canvas>
+      <div class="legend" id="practice-legend"></div>
+      <p class="readout" id="practice-read"></p></div>
+    <div class="note" id="note-perma"></div>
+  </section>
+
+  <section>
+    <h2><span class="num">05 &middot; EVERY CITATION</span>The corpus itself</h2>
+    <p class="lede" id="lede5"></p>
+    <div class="ctrls" id="filters"></div>
+    <input class="search" id="q" placeholder="Filter by case, justice, host or URL&hellip;" autocomplete="off">
+    <p class="readout" id="tblcount"></p>
+    <div class="scroll"><table id="tbl"></table></div>
+  </section>
+
+  <details class="methods">
+    <summary>Methods, and where not to push this</summary>
+    <div id="methods"></div>
+  </details>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+const D = __DATA__;
+__APP__
+</script>

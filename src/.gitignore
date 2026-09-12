@@ -1,0 +1,11 @@
+# Raw corpora: ~530 MB of CAP volumes and slip opinion PDFs. 01_download_cap.sh and
+# 03_slip_opinions.sh refetch them; both skip what is already on disk.
+raw/
+# Check results. Resumable and regenerable, but slow — delete only if you mean to
+# re-fetch the whole live web, which takes about an hour and is not free for the hosts.
+checked.jsonl
+recheck.jsonl
+wayback.jsonl
+# extractor output, rebuilt in seconds
+cap_urls.json
+slip_urls.json
