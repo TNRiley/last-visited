@@ -85,7 +85,12 @@ document.getElementById("lede5").innerHTML =
 function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
 function setup(cv) {
   const dpr = Math.min(devicePixelRatio || 1, 2);
-  const w = cv.clientWidth, h = +cv.getAttribute("height");
+  // The markup height is the CSS height. Read it once and pin it: assigning cv.height
+  // below rewrites that same attribute, so reading it again on the next redraw would
+  // double the canvas on every hover event until the browser gives up and paints white.
+  const h = +(cv.dataset.h || (cv.dataset.h = cv.getAttribute("height")));
+  cv.style.height = h + "px";
+  const w = cv.clientWidth;
   cv.width = w * dpr; cv.height = h * dpr;
   const g = cv.getContext("2d");
   g.setTransform(dpr, 0, 0, dpr, 0, 0);

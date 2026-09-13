@@ -47,6 +47,11 @@ function mkEl(id) {
     }),
     fire: (k, ev) => (L[k] || []).forEach(fn => fn(ev))
   };
+  // In a browser canvas.width/height ARE the attributes. Modelling that is what lets
+  // this test catch a redraw that reads its size back from an attribute it just wrote.
+  for (const dim of ["width", "height"]) Object.defineProperty(el, dim, {
+    get: () => +el.getAttribute(dim), set: v => el.setAttribute(dim, String(v))
+  });
   return el;
 }
 function get(id) { return elements[id] || (elements[id] = mkEl(id)); }
@@ -108,6 +113,19 @@ ok(recent > older * 10, "concentrated in 2025-26 (" + recent + " vs " + older + 
 ok(D.perma.live > D.perma.answered * 0.8,
    "and they resolve: " + D.perma.live + "/" + D.perma.answered +
    " of those giving a definite answer (" + D.perma.indet + " refused a bot)");
+
+/* Hover redraws must not resize the canvas. setup() once read its CSS height back from
+ * the height attribute after writing height * devicePixelRatio into it, so every hover
+ * doubled the canvas until the browser painted it white. */
+function stableUnderHover(id, ev) {
+  const cv = get(id), before = cv.height;
+  for (let i = 0; i < 12; i++) cv.fire("pointermove", ev);
+  ok(before > 0 && cv.height === before,
+     id + " canvas keeps its size across 12 hover redraws (" + before + " -> " + cv.height + ")");
+}
+console.log("\nhover stability:");
+stableUnderHover("decay", {clientX: 400});
+stableUnderHover("practice", {clientX: 400});
 
 console.log("\ntable + interaction paths:");
 get("decay").fire("pointermove", {clientX: 400});
